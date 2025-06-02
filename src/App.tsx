@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router';
 // import AppLayout from './layout/AppLayout';
 // import HomePage from './pages/HomePage/HomePage';
 import React, { Suspense } from 'react';
-import LoadingSpinner from './common/components/loadingSpinner';
+import LoadingSpinner from './common/components/LoadingSpinner';
 
 // lazy loading => 진짜 부를때 가져오기 => 전들 사이즈 감소 가능
 // 단, 로딩에 시간이 걸릴것이기 때문에 로딩 처리가 필요하다

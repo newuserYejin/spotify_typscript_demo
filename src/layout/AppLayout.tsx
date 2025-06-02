@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import LibraryHead from './components/LibraryHead';
 import Library from './components/Library';
+import Navbar from './components/Navbar';
 
 const Layout = styled('div')({
   display: 'flex',
@@ -62,6 +63,7 @@ const AppLayout = () => {
   return (
     <Layout>
       <Sidebar>
+        {/* menu & search box */}
         <ContentBox>
           <NavList>
             <StyledNavLink to="/">
@@ -78,12 +80,18 @@ const AppLayout = () => {
             </StyledNavLink>
           </NavList>
         </ContentBox>
+
+        {/* playlist box */}
         <ContentBox height="100%">
           <LibraryHead />
           <Library />
         </ContentBox>
       </Sidebar>
-      <Outlet />
+
+      <ContentBox>
+        <Navbar />
+        <Outlet />
+      </ContentBox>
     </Layout>
   );
 };

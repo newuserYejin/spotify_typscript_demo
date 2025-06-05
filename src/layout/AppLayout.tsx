@@ -12,6 +12,7 @@ const Layout = styled('div')({
   display: 'flex',
   height: '100vh',
   padding: '8px',
+  gap: '8px',
 });
 
 const Sidebar = styled('div')(({ theme }) => ({

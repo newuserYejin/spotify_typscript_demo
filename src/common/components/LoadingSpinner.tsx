@@ -3,7 +3,7 @@ import { DotLoader } from 'react-spinners';
 
 const LoadingSpinner = () => {
   let [loading, setLoading] = useState(true);
-  let [color, setColor] = useState('red');
+  let [color, setColor] = useState('#66bb6a');
 
   const override: CSSProperties = {
     display: 'block',

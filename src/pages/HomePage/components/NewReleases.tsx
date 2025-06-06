@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 import useGetNewReleases from '../../../hooks/useGetNewReleases';
 import LoadingSpinner from '../../../common/components/LoadingSpinner';

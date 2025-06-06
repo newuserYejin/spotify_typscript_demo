@@ -2,8 +2,9 @@ import './App.css';
 import { Routes, Route } from 'react-router';
 // import AppLayout from './layout/AppLayout';
 // import HomePage from './pages/HomePage/HomePage';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import LoadingSpinner from './common/components/LoadingSpinner';
+import useExchangeToken from './hooks/useExchangeToken';
 
 // lazy loading => 진짜 부를때 가져오기 => 전들 사이즈 감소 가능
 // 단, 로딩에 시간이 걸릴것이기 때문에 로딩 처리가 필요하다
@@ -29,6 +30,20 @@ const PlaylistDetailPage = React.lazy(() => import('./pages/PlaylistPage/Playlis
 // Suspense => 로딩상태 관리 도구
 
 function App() {
+  // 로그인을 위해 url에서 code 뽑아오기
+  const urlParams = new URLSearchParams(window.location.search);
+  let code = urlParams.get('code');
+  // stored in the previous step
+  const codeVerifier = localStorage.getItem('code_verifier');
+
+  const { mutate: exchangeToken } = useExchangeToken();
+
+  useEffect(() => {
+    if (code && codeVerifier) {
+      exchangeToken({ code, codeVerifier });
+    }
+  }, [code, codeVerifier, exchangeToken]);
+
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>

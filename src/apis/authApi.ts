@@ -51,12 +51,6 @@ export const exchangeToken = async (
       code_verifier: codeVerifier,
     });
 
-    console.log('api 호출 전body : ', body);
-    console.log('api 호출 CLIENT_ID : ', CLIENT_ID);
-    console.log('api 호출 REDIRECT_URI : ', REDIRECT_URI);
-    console.log('api 호출 codeVerifier : ', codeVerifier);
-    console.log('api 호출 code : ', code);
-
     const response = await axios.post(url, body, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

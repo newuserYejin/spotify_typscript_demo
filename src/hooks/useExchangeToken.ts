@@ -1,14 +1,18 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { exchangeToken } from '../apis/authApi';
 import { ExchangeTokenResponse } from '../models/auth';
 
 const useExchangeToken = () => {
+  const queryClient = useQueryClient();
   // get이 아닌 post이기 때문에 useQuery가 아닌 useMutation
   return useMutation<ExchangeTokenResponse, Error, { code: string; codeVerifier: string }>({
     mutationFn: ({ code, codeVerifier }) => exchangeToken(code, codeVerifier),
     // 성공시 진행할 것
     onSuccess: (data) => {
       localStorage.setItem('access_token', data.access_token);
+      queryClient.invalidateQueries({
+        queryKey: ['currentUserProfile'],
+      });
     },
   });
 };

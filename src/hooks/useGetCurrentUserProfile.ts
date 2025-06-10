@@ -7,7 +7,7 @@ const useGetCurrentUserProfile = (): UseQueryResult<User, Error> => {
   const accessToken = localStorage.getItem('access_token');
 
   return useQuery({
-    queryKey: ['currentUserProfile'],
+    queryKey: ['currentUserProfile', accessToken],
     queryFn: getCurrentUserProfile,
     // 실행 조건(accessToken이 있을때만 실행)
     enabled: !!accessToken,

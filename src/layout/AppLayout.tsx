@@ -12,7 +12,6 @@ const Layout = styled('div')({
   display: 'flex',
   height: '100vh',
   padding: '8px',
-  gap: '8px',
 });
 
 const Sidebar = styled('div')(({ theme }) => ({
@@ -20,6 +19,7 @@ const Sidebar = styled('div')(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
+  marginRight: '8px',
 
   // sm 사이즈 이하면 아래 반영
   [theme.breakpoints.down('sm')]: {
@@ -83,7 +83,7 @@ const AppLayout = () => {
         </ContentBox>
 
         {/* playlist box */}
-        <ContentBox height="100%">
+        <ContentBox height="90%">
           <LibraryHead />
           <Library />
         </ContentBox>

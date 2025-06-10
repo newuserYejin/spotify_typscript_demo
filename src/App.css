@@ -4,4 +4,6 @@ body {
   padding: 0;
   overflow-x: hidden;
   height: 100%;
+
+  overscroll-behavior: none;
 }

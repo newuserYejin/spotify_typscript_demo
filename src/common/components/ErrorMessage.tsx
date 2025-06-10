@@ -7,7 +7,7 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
-  return <Alert severity="error">${errorMessage}</Alert>;
+  return <Alert severity="error">{errorMessage}</Alert>;
 };
 
 export default ErrorMessage;

@@ -1,18 +1,39 @@
 import React from 'react';
 import { Navigate, useParams } from 'react-router';
 import useGetPlaylist from '../../hooks/useGetPlaylist';
-import { Grid, styled } from '@mui/material';
+import { Box, Grid, styled, Typography } from '@mui/material';
 
 const PlaylistDetailHead = styled(Grid)(({ theme }) => ({
-  border: 'solid 1px red',
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
+  margin: '10px 0',
 }));
 
 const PlaylistImg = styled(Grid)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   aspectRatio: '1/1',
-  [theme.breakpoints.down('sm')]: {
+
+  '& img': {
     width: '100%',
+    borderRadius: '10px',
+  },
+}));
+
+const PlaylistTitle = styled(Typography)(({ theme }) => ({
+  fontSize: '1.7rem',
+  fontWeight: 'bold',
+  wordBreak: 'keep-all',
+  marginBottom: '8px',
+
+  [theme.breakpoints.down('md')]: {
+    fontSize: '1.4rem',
+  },
+
+  // sm(600px) 이하에 적용 => xs구역
+  [theme.breakpoints.down('sm')]: {
+    wordBreak: 'normal',
   },
 }));
 
@@ -27,18 +48,27 @@ const PlaylistDetailPage = () => {
   console.log('플레이리스트 상세정보 : ', playlist);
 
   return (
-    <div>
-      <PlaylistDetailHead container>
-        <PlaylistImg size={{ sm: 12, md: 10 }}>
-          <img
-            src={playlist?.images?.[0]?.url}
-            alt="플레이리스트 커버 이미지"
-            style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-          />
+    <Box sx={{ padding: '10px' }}>
+      <PlaylistDetailHead container spacing={3}>
+        <PlaylistImg size={{ xs: 12, sm: 5, md: 2 }}>
+          <img src={playlist?.images?.[0]?.url} alt="플레이리스트 커버 이미지" />
         </PlaylistImg>
-        <Grid size={{ sm: 12, md: 10 }}></Grid>
+        <Grid size={{ xs: 12, sm: 7, md: 10 }}>
+          <PlaylistTitle>{playlist?.name}</PlaylistTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img
+              src="https://i.scdn.co/image/ab67757000003b8255c25988a6ac314394d3fbf5"
+              alt="spotify 로고"
+              width="20px"
+            />
+            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+              {playlist?.owner.display_name}
+            </Typography>
+            <Typography variant="subtitle1">{playlist?.tracks.total} songs</Typography>
+          </Box>
+        </Grid>
       </PlaylistDetailHead>
-    </div>
+    </Box>
   );
 };
 

@@ -1,4 +1,9 @@
-import { GetCurrentUserPlaylistRequest, GetCurrentUserPlaylistResponse } from '../models/playlist';
+import axios from 'axios';
+import {
+  GetCurrentUserPlaylistRequest,
+  GetCurrentUserPlaylistResponse,
+  GetPlaylistRequest,
+} from '../models/playlist';
 import api from '../utils/api';
 
 export const getCurrentUserPlaylist = async ({
@@ -13,5 +18,17 @@ export const getCurrentUserPlaylist = async ({
     return response.data;
   } catch (error) {
     throw new Error('fail to fetch current user playlist');
+  }
+};
+
+export const getPlaylist = async (params: GetPlaylistRequest) => {
+  try {
+    const response = await api.get(`/playlists/${params.playlist_id}`, {
+      params,
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error('fail to fetch playlist detail');
   }
 };

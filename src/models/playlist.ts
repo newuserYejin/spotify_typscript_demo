@@ -27,3 +27,10 @@ export interface SimplifiedPlaylistObject {
 
 // ApiResponse 타입을 값으로 받는 킥밧이 없는 경우이기 때문에 interface가 아닌 type로 작성
 export type GetCurrentUserPlaylistResponse = ApiResponse<SimplifiedPlaylistObject>;
+
+export interface GetPlaylistRequest {
+  playlist_id: string;
+  market?: string;
+  fields?: string;
+  additional_types?: string;
+}

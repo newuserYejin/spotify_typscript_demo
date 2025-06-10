@@ -6,15 +6,18 @@ interface ItemProps {
   ownerName: string | null;
   imageSrc: string | null;
   id: string;
+  handleClick: (id: string) => void;
+  selected: boolean;
 }
 
-const ItemContainer = styled(ListItemButton)(({ theme }) => ({
+const ItemContainer = styled(ListItemButton)(({ theme, selected }) => ({
   padding: '8px',
   borderRadius: '8px',
   border: 'solid 1px',
   borderColor: theme.palette.background.paper,
   height: '100px',
   marginBottom: '8px',
+  backgroundColor: selected ? theme.palette.action.active : '',
 }));
 
 const ItemImgBox = styled('img')({
@@ -40,9 +43,9 @@ const ItemInfo = styled('div')(({ theme }) => ({
   wordBreak: 'break-word',
 }));
 
-const PlaylistItem = ({ name, ownerName, imageSrc, id }: ItemProps) => {
+const PlaylistItem = ({ handleClick, name, ownerName, imageSrc, id, selected }: ItemProps) => {
   return (
-    <ItemContainer>
+    <ItemContainer selected={selected} onClick={() => handleClick(id)}>
       {imageSrc ? <ItemImgBox src={imageSrc} alt={name + '커버이미지'} /> : 'no'}
       <ItemInfo>
         <EllipsisTypography typography="body1">{name}</EllipsisTypography>

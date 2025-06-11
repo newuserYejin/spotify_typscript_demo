@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Navigate, useParams } from 'react-router';
 import useGetPlaylist from '../../hooks/useGetPlaylist';
 import {
@@ -9,6 +9,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   Typography,
@@ -17,12 +18,15 @@ import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import useGetPlaylistItems from '../../hooks/useGetPlaylistItems';
 import DesktopPlaylistItem from './component/DesktopPlaylistItem';
 import { PAGE_LIMIT } from '../../configs/commonConfig';
+import { useInView } from 'react-intersection-observer';
+import LoadingSpinner from '../../common/components/LoadingSpinner';
+import MobilePlaylistItem from './component/MobilePlaylistItem';
 
 const PlaylistDetailHead = styled(Grid)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'row',
-  margin: '10px 0',
+  marginBottom: '10px',
 }));
 
 const PlaylistImg = styled(Grid)(({ theme }) => ({
@@ -61,16 +65,33 @@ const NoImgBox = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
 }));
+interface PlaylistTableContainerProps {
+  maxHeight?: string | null;
+}
+
+const PlaylistTableContainer = styled(TableContainer)<PlaylistTableContainerProps>(
+  ({ theme, maxHeight }) => ({
+    // border: 'solid 1px red',
+    maxHeight: maxHeight || 'auto',
+
+    scrollbarWidth: 'none', // Firefox
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  })
+);
 
 const PlaylistDetailPage = () => {
+  const headRef = useRef<HTMLDivElement>(null);
+  const [maxHeight, setMaxHeight] = useState<string | null>(null);
+  const { ref: endRef, inView } = useInView();
+
   //url에서 id 읽어오기
   const { id } = useParams<{ id: string }>();
 
   if (id === undefined) return <Navigate to="/" />;
 
   const { data: playlist } = useGetPlaylist({ playlist_id: id });
-
-  console.log('플레이리스트 상세정보 : ', playlist);
 
   const {
     data: playlistItems,
@@ -79,13 +100,27 @@ const PlaylistDetailPage = () => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT, offset: 0 });
+  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT });
 
+  // console.log('플레이리스트 상세정보 : ', playlist);
   console.log('playlist Items data : ', playlistItems);
 
+  // 사이즈 측정
+  useLayoutEffect(() => {
+    const headHeight = headRef.current?.offsetHeight || 0;
+    setMaxHeight(`calc( 100% - ${headHeight}px - 10px)`); // 64px 여백 포함 조정
+  });
+
+  // 무한 스크롤
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
   return (
-    <Box sx={{ padding: '10px' }}>
-      <PlaylistDetailHead container spacing={3}>
+    <Box sx={{ height: 'calc( 100% - 64px)' }}>
+      <PlaylistDetailHead ref={headRef} container spacing={3}>
         <PlaylistImg size={{ xs: 12, sm: 5, md: 2 }}>
           {playlist?.images ? (
             <img src={playlist?.images?.[0]?.url} alt="플레이리스트 커버 이미지" />
@@ -113,30 +148,47 @@ const PlaylistDetailPage = () => {
       {playlist?.tracks?.total === 0 ? (
         <Typography>Search</Typography>
       ) : (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Album</TableCell>
-              <TableCell>Date added</TableCell>
-              <TableCell>Duration</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {playlistItems?.pages.map((page, pageIndex) =>
-              page.items.map((item, itemIndex) => {
-                return (
-                  <DesktopPlaylistItem
-                    item={item}
-                    key={pageIndex * PAGE_LIMIT + itemIndex + 1}
-                    index={pageIndex * PAGE_LIMIT + itemIndex + 1}
-                  />
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
+        <PlaylistTableContainer maxHeight={maxHeight}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Album</TableCell>
+                <TableCell sx={{ textAlign: 'center', width: { sm: '120px' } }}>
+                  Date added
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>Duration</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {playlistItems?.pages.map((page, pageIndex) =>
+                page.items.map((item, itemIndex) => {
+                  return (
+                    <>
+                      <DesktopPlaylistItem
+                        item={item}
+                        key={pageIndex * PAGE_LIMIT + itemIndex + 1}
+                        index={pageIndex * PAGE_LIMIT + itemIndex + 1}
+                      />
+                    </>
+                  );
+                })
+              )}
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  sx={{
+                    paddingTop: '0',
+                  }}
+                  ref={endRef}
+                >
+                  {isFetchingNextPage && <LoadingSpinner size={80} />}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </PlaylistTableContainer>
       )}
     </Box>
   );

@@ -1,7 +1,11 @@
 import React, { CSSProperties, useState } from 'react';
 import { DotLoader } from 'react-spinners';
 
-const LoadingSpinner = () => {
+interface LoadingSpinnerProps {
+  size?: number;
+}
+
+const LoadingSpinner = ({ size = 150 }: LoadingSpinnerProps) => {
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState('#66bb6a');
 
@@ -16,7 +20,7 @@ const LoadingSpinner = () => {
         color={color}
         loading={loading}
         cssOverride={override}
-        size={150}
+        size={size}
         aria-label="Loading Spinner"
         data-testid="loader"
       />

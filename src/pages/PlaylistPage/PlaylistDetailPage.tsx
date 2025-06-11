@@ -1,7 +1,8 @@
 import React from 'react';
 import { Navigate, useParams } from 'react-router';
 import useGetPlaylist from '../../hooks/useGetPlaylist';
-import { Box, Grid, styled, Typography } from '@mui/material';
+import { Box, Grid, Icon, styled, Typography } from '@mui/material';
+import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 
 const PlaylistDetailHead = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -37,6 +38,16 @@ const PlaylistTitle = styled(Typography)(({ theme }) => ({
   },
 }));
 
+const NoImgBox = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.action.hover,
+  borderRadius: '10px',
+  width: '100%',
+
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+}));
+
 const PlaylistDetailPage = () => {
   //url에서 id 읽어오기
   const { id } = useParams<{ id: string }>();
@@ -51,7 +62,13 @@ const PlaylistDetailPage = () => {
     <Box sx={{ padding: '10px' }}>
       <PlaylistDetailHead container spacing={3}>
         <PlaylistImg size={{ xs: 12, sm: 5, md: 2 }}>
-          <img src={playlist?.images?.[0]?.url} alt="플레이리스트 커버 이미지" />
+          {playlist?.images ? (
+            <img src={playlist?.images?.[0]?.url} alt="플레이리스트 커버 이미지" />
+          ) : (
+            <NoImgBox>
+              <LibraryMusicIcon />
+            </NoImgBox>
+          )}
         </PlaylistImg>
         <Grid size={{ xs: 12, sm: 7, md: 10 }}>
           <PlaylistTitle>{playlist?.name}</PlaylistTitle>
@@ -62,7 +79,7 @@ const PlaylistDetailPage = () => {
               width="20px"
             />
             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-              {playlist?.owner.display_name}
+              {playlist?.owner ? playlist?.owner.display_name : 'unknown'}
             </Typography>
             <Typography variant="subtitle1">{playlist?.tracks.total} songs</Typography>
           </Box>

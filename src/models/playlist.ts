@@ -1,7 +1,6 @@
-import { SimplifiedAlbum } from './album';
 import { ApiResponse } from './apiResponse';
-import { Artist } from './artist';
 import { Copyright, ExternalUrls, Image, Owner, Restriction } from './commonType';
+import { EpisodeObject, Track } from './track';
 
 export interface GetCurrentUserPlaylistRequest {
   limit?: number;
@@ -47,6 +46,13 @@ export interface GetPlaylistRequest {
   additional_types?: string;
 }
 
+export interface GetPlaylistItemsRequest extends GetPlaylistRequest {
+  limit?: number;
+  offset?: number;
+}
+
+export type GetPlaylistItemsResponse = ApiResponse<PlaylistTrack>;
+
 export interface PlaylistTrack {
   added_at: string | null;
   added_by?: {
@@ -58,81 +64,4 @@ export interface PlaylistTrack {
   } | null;
   is_local?: boolean;
   track?: Track | EpisodeObject;
-  type?: 'playlist';
-  uri?: string;
-}
-
-export interface Track {
-  album?: SimplifiedAlbum;
-  artists?: Artist[];
-  available_markets?: string[];
-  disc_number?: number;
-  duration_ms?: number;
-  explicit?: boolean;
-  external_ids?: {
-    isrc?: string;
-    ean?: string;
-    upc?: string;
-  };
-  external_urls?: ExternalUrls;
-  href?: string;
-  id?: string;
-  is_playable?: boolean;
-  linked_from?: {};
-  restrictions?: Restriction;
-  name?: string;
-  popularity?: number;
-  preview_url?: string | null;
-  track_number?: number;
-  type?: 'track';
-  uri?: string;
-  is_local?: boolean;
-}
-
-export interface EpisodeObject {
-  audio_preview_url: string | null;
-  description: string;
-  html_description: string;
-  duration_ms: number;
-  explicit: boolean;
-  external_urls: ExternalUrls;
-  href: string;
-  id: string;
-  images: Image[];
-  is_externally_hosted: boolean;
-  is_playable: boolean;
-  language?: string;
-  languages: string[];
-  name: string;
-  release_date: string;
-
-  resume_point?: {
-    fully_played?: boolean;
-    resume_position_ms?: number;
-  };
-
-  type: 'episode';
-  uri: string;
-  restrictions?: Restriction;
-  show: Show;
-}
-
-export interface Show {
-  available_markets: string[];
-  copyrights: Copyright[];
-  description: string;
-  html_description: string;
-  explicit: boolean;
-  external_urls: ExternalUrls;
-  href: string;
-  id: string;
-  images: Image[];
-  is_externally_hosted: boolean;
-  languages: string[];
-  media_type: string;
-  name: string;
-  publisher: string;
-  type: 'show';
-  uri: string;
-  total_episodes: number;
 }

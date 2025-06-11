@@ -42,6 +42,7 @@ const Navbar = () => {
     localStorage.clear();
     queryClient.clear();
     navigate('/');
+    window.location.reload();
   };
 
   return (

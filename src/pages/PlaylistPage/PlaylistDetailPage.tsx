@@ -1,8 +1,22 @@
 import React from 'react';
 import { Navigate, useParams } from 'react-router';
 import useGetPlaylist from '../../hooks/useGetPlaylist';
-import { Box, Grid, Icon, styled, Typography } from '@mui/material';
+import {
+  Box,
+  Grid,
+  Icon,
+  styled,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import useGetPlaylistItems from '../../hooks/useGetPlaylistItems';
+import DesktopPlaylistItem from './component/DesktopPlaylistItem';
+import { PAGE_LIMIT } from '../../configs/commonConfig';
 
 const PlaylistDetailHead = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -58,6 +72,17 @@ const PlaylistDetailPage = () => {
 
   console.log('플레이리스트 상세정보 : ', playlist);
 
+  const {
+    data: playlistItems,
+    isLoading: isPlaylistItemsLoading,
+    error: playlistItemsLoadingError,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT, offset: 0 });
+
+  console.log('playlist Items data : ', playlistItems);
+
   return (
     <Box sx={{ padding: '10px' }}>
       <PlaylistDetailHead container spacing={3}>
@@ -81,10 +106,38 @@ const PlaylistDetailPage = () => {
             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
               {playlist?.owner ? playlist?.owner.display_name : 'unknown'}
             </Typography>
-            <Typography variant="subtitle1">{playlist?.tracks.total} songs</Typography>
+            <Typography variant="subtitle1">{playlist?.tracks?.total} songs</Typography>
           </Box>
         </Grid>
       </PlaylistDetailHead>
+      {playlist?.tracks?.total === 0 ? (
+        <Typography>Search</Typography>
+      ) : (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>#</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Album</TableCell>
+              <TableCell>Date added</TableCell>
+              <TableCell>Duration</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {playlistItems?.pages.map((page, pageIndex) =>
+              page.items.map((item, itemIndex) => {
+                return (
+                  <DesktopPlaylistItem
+                    item={item}
+                    key={pageIndex * PAGE_LIMIT + itemIndex + 1}
+                    index={pageIndex * PAGE_LIMIT + itemIndex + 1}
+                  />
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      )}
     </Box>
   );
 };

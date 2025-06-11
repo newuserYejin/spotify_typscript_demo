@@ -27,6 +27,18 @@ const ItemImgBox = styled('img')({
   marginRight: '15px',
 });
 
+const NoImgBox = styled('div')(({ theme }) => ({
+  width: '35%',
+  aspectRatio: '1/1',
+  borderRadius: '10px',
+  marginRight: '15px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  backgroundColor: theme.palette.action.hover,
+}));
+
 const EllipsisTypography = styled(Typography)(({ theme }) => ({
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
@@ -46,7 +58,11 @@ const ItemInfo = styled('div')(({ theme }) => ({
 const PlaylistItem = ({ handleClick, name, ownerName, imageSrc, id, selected }: ItemProps) => {
   return (
     <ItemContainer selected={selected} onClick={() => handleClick(id)}>
-      {imageSrc ? <ItemImgBox src={imageSrc} alt={name + '커버이미지'} /> : 'no'}
+      {imageSrc ? (
+        <ItemImgBox src={imageSrc} alt={name + '커버이미지'} />
+      ) : (
+        <NoImgBox>No Image</NoImgBox>
+      )}
       <ItemInfo>
         <EllipsisTypography typography="body1">{name}</EllipsisTypography>
         <Typography typography="subtitle1" sx={{ fontWeight: 'bold' }}>

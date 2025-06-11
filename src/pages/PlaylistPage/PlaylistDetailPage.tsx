@@ -3,8 +3,11 @@ import { Navigate, useParams } from 'react-router';
 import useGetPlaylist from '../../hooks/useGetPlaylist';
 import {
   Box,
+  FormControl,
   Grid,
   Icon,
+  Input,
+  InputAdornment,
   styled,
   Table,
   TableBody,
@@ -21,6 +24,7 @@ import { PAGE_LIMIT } from '../../configs/commonConfig';
 import { useInView } from 'react-intersection-observer';
 import LoadingSpinner from '../../common/components/LoadingSpinner';
 import MobilePlaylistItem from './component/MobilePlaylistItem';
+import SearchIcon from '@mui/icons-material/Search';
 
 const PlaylistDetailHead = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -80,6 +84,20 @@ const PlaylistTableContainer = styled(TableContainer)<PlaylistTableContainerProp
     },
   })
 );
+
+const SearchBox = styled(FormControl)(({ theme }) => ({
+  backgroundColor: theme.palette.action.hover,
+  padding: '10px 20px',
+  width: '30%',
+
+  [theme.breakpoints.down('md')]: {
+    width: '60%',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+  },
+}));
 
 const PlaylistDetailPage = () => {
   const headRef = useRef<HTMLDivElement>(null);
@@ -146,7 +164,22 @@ const PlaylistDetailPage = () => {
         </Grid>
       </PlaylistDetailHead>
       {playlist?.tracks?.total === 0 ? (
-        <Typography>Search</Typography>
+        <Box>
+          <Typography variant="h1" sx={{ margin: '20px 0', fontSize: { xs: '18px', sm: '24px' } }}>
+            Let's find something for your playlist
+          </Typography>
+          <SearchBox variant="standard">
+            <Input
+              placeholder="Search for songs or episodes"
+              id="input-with-icon-adornment"
+              startAdornment={
+                <InputAdornment position="start">
+                  <SearchIcon color="secondary" />
+                </InputAdornment>
+              }
+            />
+          </SearchBox>
+        </Box>
       ) : (
         <PlaylistTableContainer maxHeight={maxHeight}>
           <Table stickyHeader aria-label="sticky table">

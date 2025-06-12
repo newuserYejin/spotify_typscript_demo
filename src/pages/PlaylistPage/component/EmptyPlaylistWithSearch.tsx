@@ -1,6 +1,8 @@
 import { Box, FormControl, Input, InputAdornment, styled, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
+import useSearchItemsByKeyword from '../../../hooks/useSearchItemsByKeyword';
+import { SEARCH_TYPE } from '../../../models/search';
 
 const SearchBox = styled(FormControl)(({ theme }) => ({
   backgroundColor: theme.palette.action.hover,
@@ -18,6 +20,13 @@ const SearchBox = styled(FormControl)(({ theme }) => ({
 
 const EmptyPlaylistWithSearch = () => {
   const [keyword, setKeyWord] = useState<string>('');
+
+  const { data, error, isLoading } = useSearchItemsByKeyword({
+    q: keyword,
+    type: [SEARCH_TYPE.Track],
+  });
+
+  console.log('검색 데이터 : ', data);
 
   function handelSearchKeyword(event: React.ChangeEvent<HTMLInputElement>) {
     setKeyWord(event.target.value);

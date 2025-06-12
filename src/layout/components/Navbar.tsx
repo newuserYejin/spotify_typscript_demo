@@ -41,7 +41,7 @@ const Navbar = () => {
     setAnchorEl(null);
     localStorage.clear();
     queryClient.clear();
-    navigate('/');
+    // navigate('/');
     window.location.reload();
   };
 

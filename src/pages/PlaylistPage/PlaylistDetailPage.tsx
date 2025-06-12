@@ -3,11 +3,8 @@ import { Navigate, useParams } from 'react-router';
 import useGetPlaylist from '../../hooks/useGetPlaylist';
 import {
   Box,
-  FormControl,
   Grid,
   Icon,
-  Input,
-  InputAdornment,
   styled,
   Table,
   TableBody,
@@ -24,7 +21,10 @@ import { PAGE_LIMIT } from '../../configs/commonConfig';
 import { useInView } from 'react-intersection-observer';
 import LoadingSpinner from '../../common/components/LoadingSpinner';
 import MobilePlaylistItem from './component/MobilePlaylistItem';
-import SearchIcon from '@mui/icons-material/Search';
+import LoginButton from '../../common/components/LoginButton';
+import ErrorMessage from '../../common/components/ErrorMessage';
+import { isAxiosError } from 'axios';
+import EmptyPlaylistWithSearch from './component/EmptyPlaylistWithSearch';
 
 const PlaylistDetailHead = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -85,20 +85,6 @@ const PlaylistTableContainer = styled(TableContainer)<PlaylistTableContainerProp
   })
 );
 
-const SearchBox = styled(FormControl)(({ theme }) => ({
-  backgroundColor: theme.palette.action.hover,
-  padding: '10px 20px',
-  width: '30%',
-
-  [theme.breakpoints.down('md')]: {
-    width: '60%',
-  },
-
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-  },
-}));
-
 const PlaylistDetailPage = () => {
   const headRef = useRef<HTMLDivElement>(null);
   const [maxHeight, setMaxHeight] = useState<string | null>(null);
@@ -109,7 +95,7 @@ const PlaylistDetailPage = () => {
 
   if (id === undefined) return <Navigate to="/" />;
 
-  const { data: playlist } = useGetPlaylist({ playlist_id: id });
+  const { data: playlist, error: playlistError } = useGetPlaylist({ playlist_id: id });
 
   const {
     data: playlistItems,
@@ -118,7 +104,7 @@ const PlaylistDetailPage = () => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT });
+  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT, retry: false });
 
   // console.log('플레이리스트 상세정보 : ', playlist);
   console.log('playlist Items data : ', playlistItems);
@@ -135,6 +121,29 @@ const PlaylistDetailPage = () => {
       fetchNextPage();
     }
   }, [inView]);
+
+  if (playlistItemsLoadingError || playlistError) {
+    const error = playlistItemsLoadingError || playlistError;
+    // console.log(isAxiosError(playlistItemsLoadingError));
+    if (isAxiosError(error) && error.response?.status == 401) {
+      //로그인을 안해서 권한 없음 에러라면 로그인 버튼
+      return (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
+          flexDirection="column"
+        >
+          <Typography variant="h2" fontWeight={700} mb="20px">
+            다시 로그인 하세요
+          </Typography>
+          <LoginButton />
+        </Box>
+      );
+    }
+    return <ErrorMessage errorMessage="Failed to load" />; // 정말 리스트 가져오기 실패라면 fail to load
+  }
 
   return (
     <Box sx={{ height: 'calc( 100% - 64px)' }}>
@@ -164,22 +173,7 @@ const PlaylistDetailPage = () => {
         </Grid>
       </PlaylistDetailHead>
       {playlist?.tracks?.total === 0 ? (
-        <Box>
-          <Typography variant="h1" sx={{ margin: '20px 0', fontSize: { xs: '18px', sm: '24px' } }}>
-            Let's find something for your playlist
-          </Typography>
-          <SearchBox variant="standard">
-            <Input
-              placeholder="Search for songs or episodes"
-              id="input-with-icon-adornment"
-              startAdornment={
-                <InputAdornment position="start">
-                  <SearchIcon color="secondary" />
-                </InputAdornment>
-              }
-            />
-          </SearchBox>
-        </Box>
+        <EmptyPlaylistWithSearch />
       ) : (
         <PlaylistTableContainer maxHeight={maxHeight}>
           <Table stickyHeader aria-label="sticky table">

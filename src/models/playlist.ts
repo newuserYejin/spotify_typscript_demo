@@ -49,6 +49,7 @@ export interface GetPlaylistRequest {
 export interface GetPlaylistItemsRequest extends GetPlaylistRequest {
   limit?: number;
   offset?: number;
+  retry?: boolean;
 }
 
 export type GetPlaylistItemsResponse = ApiResponse<PlaylistTrack>;
@@ -64,4 +65,11 @@ export interface PlaylistTrack {
   } | null;
   is_local?: boolean;
   track?: Track | EpisodeObject;
+}
+
+export interface CreatePlaylistRequest {
+  name: string;
+  playlistPublic?: boolean;
+  collaborative?: boolean;
+  description?: string;
 }

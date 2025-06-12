@@ -3,6 +3,8 @@ import { GetPlaylistItemsRequest } from '../models/playlist';
 import { getPlaylistItems } from '../apis/playlistApi';
 
 const useGetPlaylistItems = (params: GetPlaylistItemsRequest) => {
+  const { retry = true } = params;
+
   return useInfiniteQuery({
     queryKey: ['playlist-items', params],
     queryFn: ({ pageParam }) => {
@@ -18,6 +20,7 @@ const useGetPlaylistItems = (params: GetPlaylistItemsRequest) => {
       }
       return undefined;
     },
+    retry: retry,
   });
 };
 

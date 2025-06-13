@@ -69,25 +69,18 @@ const NoImgBox = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
 }));
-interface PlaylistTableContainerProps {
-  maxHeight?: string | null;
-}
 
-const PlaylistTableContainer = styled(TableContainer)<PlaylistTableContainerProps>(
-  ({ theme, maxHeight }) => ({
-    // border: 'solid 1px red',
-    maxHeight: maxHeight || 'auto',
-
-    scrollbarWidth: 'none', // Firefox
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
-  })
-);
+const PlaylistTableContainer = styled(TableContainer)(({ theme }) => ({
+  // border: 'solid 1px red',
+  scrollbarWidth: 'none', // Firefox
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
+}));
 
 const PlaylistDetailPage = () => {
   const headRef = useRef<HTMLDivElement>(null);
-  const [maxHeight, setMaxHeight] = useState<string | null>(null);
+  const [maxPlayListHeight, setMaxPlayListHeight] = useState<string | null>(null);
   const { ref: endRef, inView } = useInView();
 
   //url에서 id 읽어오기
@@ -112,7 +105,7 @@ const PlaylistDetailPage = () => {
   // 사이즈 측정
   useLayoutEffect(() => {
     const headHeight = headRef.current?.offsetHeight || 0;
-    setMaxHeight(`calc( 100% - ${headHeight}px - 10px)`); // 64px 여백 포함 조정
+    setMaxPlayListHeight(`calc( 100% - ${headHeight}px - 10px)`);
   });
 
   // 무한 스크롤
@@ -173,9 +166,9 @@ const PlaylistDetailPage = () => {
         </Grid>
       </PlaylistDetailHead>
       {playlist?.tracks?.total === 0 ? (
-        <EmptyPlaylistWithSearch />
+        <EmptyPlaylistWithSearch maxHeight={maxPlayListHeight} />
       ) : (
-        <PlaylistTableContainer maxHeight={maxHeight}>
+        <PlaylistTableContainer sx={{ maxHeight: maxPlayListHeight }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>

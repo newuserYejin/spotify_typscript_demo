@@ -12,6 +12,7 @@ const useSearchItemsByKeyword = (params: SearchRequestParams) => {
       if (!clientCredentialToken) throw new Error('no token available');
       return searchItemsByKeyword(clientCredentialToken, { offset: pageParam, ...params });
     },
+    enabled: !!params.q,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       const nextPageUrl =

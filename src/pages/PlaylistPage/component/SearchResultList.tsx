@@ -12,6 +12,9 @@ import {
 } from '@mui/material';
 import LoadingSpinner from '../../../common/components/LoadingSpinner';
 import { useInView } from 'react-intersection-observer';
+import { useParams } from 'react-router';
+import useAddItemToPlaylist from '../../../hooks/useAddItemToPlaylist';
+import { getSpotifyAuthUrl } from '../../../utils/auth';
 
 interface SearchResultListProps {
   list: Track[];
@@ -65,6 +68,20 @@ const SearchResultList = ({
     }
   }, [inView]);
 
+  // playlist 아이디 읽어오기
+  const { id } = useParams<{ id: string }>();
+  const { mutate: addItemToPlaylist } = useAddItemToPlaylist();
+
+  const handleAddItemToPlaylist = (uri: string) => {
+    if (!id) {
+      getSpotifyAuthUrl();
+      return;
+    }
+
+    const params = { playlist_id: id, bodyUris: [uri] };
+    addItemToPlaylist(params);
+  };
+
   return (
     <SearchResultTable ref={containerRef} sx={{ maxHeight: maxHeight, overflow: 'auto' }}>
       <Table aria-label="sticky table">
@@ -84,7 +101,12 @@ const SearchResultList = ({
               </TableCell>
               <TableCell>{track.album?.name}</TableCell>
               <TableCell>
-                <Button sx={{ border: 'solid 1px ' }}>Add</Button>
+                <Button
+                  sx={{ border: 'solid 1px ' }}
+                  onClick={() => handleAddItemToPlaylist(track.uri ? track.uri : '')}
+                >
+                  Add
+                </Button>
               </TableCell>
             </SearchResultItem>
           ))}

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  AddItemToPlaylistRequest,
   CreatePlaylistRequest,
   GetCurrentUserPlaylistRequest,
   GetCurrentUserPlaylistResponse,
@@ -74,5 +75,25 @@ export const createPlaylist = async (
     return response.data;
   } catch (error) {
     throw new Error('fail to create new playlist');
+  }
+};
+
+export const addItemToPlaylist = async (params: AddItemToPlaylistRequest) => {
+  try {
+    const searchParams = new URLSearchParams();
+    if (params.position) searchParams.append('position', params.position.toString());
+    if (params.uris) searchParams.append('uri', params.uris);
+
+    const response = await api.post(
+      `/playlists/${params.playlist_id}/tracks?${searchParams.toString()}`,
+      {
+        uris: params.bodyUris,
+        position: params.bodyPosition,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error('fail to add item to playlist');
   }
 };

@@ -4,7 +4,7 @@ import LoginButton from '../../common/components/LoginButton';
 import useGetCurrentUserProfile from '../../hooks/useGetCurrentUserProfile';
 import PersonIcon from '@mui/icons-material/Person';
 import { useQueryClient } from '@tanstack/react-query';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import SearchBox from '../../pages/PlaylistPage/component/SearchBox';
 import { OneKk } from '@mui/icons-material';
 
@@ -38,11 +38,17 @@ const Navbar = () => {
   const logoutBox = Boolean(anchorEl);
   const queryClient = useQueryClient();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const [keyword, setKwyWord] = useState<string>('');
+  const [keyword, setKeyWord] = useState<string>('');
 
   const handelSearchKeyword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKwyWord(event.target.value);
+    setKeyWord(event.target.value);
+  };
+
+  const enterKeywordFn = () => {
+    console.log('키워드 : ', keyword);
+    navigate(`/search/${keyword}`);
   };
 
   const removeUser = () => {
@@ -60,9 +66,14 @@ const Navbar = () => {
       alignItems="center"
       height="64px"
       width="100%"
+      gap="10px"
     >
       {location.pathname.startsWith('/search') && (
-        <SearchBox keyword={keyword} handelSearchKeyword={handelSearchKeyword} />
+        <SearchBox
+          keyword={keyword}
+          handelSearchKeyword={handelSearchKeyword}
+          enterKeywordFn={enterKeywordFn}
+        />
       )}
       {userProfile ? (
         userProfile.images[0] ? (

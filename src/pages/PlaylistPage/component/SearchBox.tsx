@@ -19,9 +19,19 @@ const SearchInputBox = styled(FormControl)(({ theme }) => ({
 interface ISearchParams {
   keyword: string;
   handelSearchKeyword: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  enterKeywordFn?: () => void;
 }
 
-const SearchBox = ({ keyword, handelSearchKeyword }: ISearchParams) => {
+const SearchBox = ({ keyword, handelSearchKeyword, enterKeywordFn }: ISearchParams) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (enterKeywordFn) {
+        enterKeywordFn(); // ✅ props가 있으면 실행
+      }
+    }
+  };
+
   return (
     <SearchInputBox variant="standard">
       <Input
@@ -34,6 +44,7 @@ const SearchBox = ({ keyword, handelSearchKeyword }: ISearchParams) => {
         }
         value={keyword}
         onChange={handelSearchKeyword}
+        onKeyDown={handleKeyDown}
       />
     </SearchInputBox>
   );

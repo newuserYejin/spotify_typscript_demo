@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SimplifiedPlaylistObject } from '../../models/playlist';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate, useLocation, useNavigate } from 'react-router';
 import PlaylistItem from '../../common/components/PlaylistItem';
 
 interface PlayListProps {
@@ -8,10 +8,16 @@ interface PlayListProps {
 }
 
 const PlayList = ({ playlists }: PlayListProps) => {
-  // 아직 왜 쓰는지 모름
   const [selectedId, setSelectedId] = useState<string>('');
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.pathname.startsWith('/playlist/') || selectedId == '') {
+      setSelectedId('');
+    }
+  }, [location.pathname]);
 
   const handleClick = (id: string) => {
     setSelectedId(id);

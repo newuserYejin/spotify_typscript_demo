@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import LoginButton from '../../common/components/LoginButton';
 import useGetCurrentUserProfile from '../../hooks/useGetCurrentUserProfile';
 import PersonIcon from '@mui/icons-material/Person';
-import { useNavigate } from 'react-router';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'react-router';
+import SearchBox from '../../pages/PlaylistPage/component/SearchBox';
+import { OneKk } from '@mui/icons-material';
 
 const ProfileImageBox = styled('div')(({ theme }) => ({
   minWidth: '40px',
@@ -34,8 +36,14 @@ const Navbar = () => {
   const { data: userProfile } = useGetCurrentUserProfile();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const logoutBox = Boolean(anchorEl);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const location = useLocation();
+
+  const [keyword, setKwyWord] = useState<string>('');
+
+  const handelSearchKeyword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKwyWord(event.target.value);
+  };
 
   const removeUser = () => {
     setAnchorEl(null);
@@ -46,7 +54,16 @@ const Navbar = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="flex-end" alignItems="center" height="64px">
+    <Box
+      display="flex"
+      justifyContent={location.pathname.startsWith('/search') ? 'space-between' : 'flex-end'}
+      alignItems="center"
+      height="64px"
+      width="100%"
+    >
+      {location.pathname.startsWith('/search') && (
+        <SearchBox keyword={keyword} handelSearchKeyword={handelSearchKeyword} />
+      )}
       {userProfile ? (
         userProfile.images[0] ? (
           <ProfileImageBox onClick={(e) => setAnchorEl(e.currentTarget)}>
@@ -72,7 +89,6 @@ const Navbar = () => {
       ) : (
         <LoginButton />
       )}
-
       <LogoutBox
         id="logout-menu"
         anchorEl={anchorEl}

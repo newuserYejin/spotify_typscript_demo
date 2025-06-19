@@ -2,7 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import useSearchItemsByKeyword from '../../hooks/useSearchItemsByKeyword';
 import { SEARCH_TYPE } from '../../models/search';
-import { Avatar, Box, Grid, Menu, MenuItem, styled, Typography } from '@mui/material';
+import {
+  AlertColor,
+  Avatar,
+  Box,
+  Grid,
+  Menu,
+  MenuItem,
+  Snackbar,
+  SnackbarCloseReason,
+  styled,
+  Typography,
+} from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PlayButton from '../../common/components/PlayButton';
 import useGetCurrentUserProfile from '../../hooks/useGetCurrentUserProfile';
@@ -185,7 +196,21 @@ const SearchWithKeywordPage = () => {
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const [targetUI, setTargetUI] = useState<SVGSVGElement | null>(null);
   const [songURI, setSongURI] = useState<string>('');
-  const { mutate: addItemToPlaylist } = useAddItemToPlaylist();
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('success'); // 'success' | 'error' | 'info' | 'warning'
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const { mutate: addItemToPlaylist } = useAddItemToPlaylist(
+    () => {
+      setSnackbarMessage('Added to Playlist');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+    },
+    () => {
+      setSnackbarMessage('Failed to Playlist');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  );
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
 
   const allPlaylist = userPlaylist?.pages.flatMap((page) => page.items || []) || [];
   console.log('사용자 allPlaylist 정보 : ', allPlaylist);
@@ -202,6 +227,17 @@ const SearchWithKeywordPage = () => {
       setTargetIndex(indexNumber);
       setTargetUI(e.currentTarget);
     }
+  };
+
+  const snackBarHandleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
   };
 
   const handleClose = () => {
@@ -367,6 +403,19 @@ const SearchWithKeywordPage = () => {
             )}
           </Grid>
         </GridBox>
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          autoHideDuration={3000}
+          open={snackbarOpen}
+          onClose={snackBarHandleClose}
+          message={snackbarMessage}
+          sx={{
+            '& div': {
+              backgroundColor: snackbarSeverity == 'error' ? 'red' : '#1ed760',
+              color: 'white',
+            },
+          }}
+        />
       </SearchResultBox>
     </>
   );

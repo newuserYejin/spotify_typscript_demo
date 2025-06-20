@@ -45,7 +45,7 @@ const SearchPage = () => {
   }, [inView]);
 
   return (
-    <Box sx={{ height: '90%' }}>
+    <Box sx={{ height: '90%', maxHeight: 'calc(100% - 70px)' }}>
       <Typography variant="h1" sx={{ margin: '10px 0 15px' }}>
         Browse All
       </Typography>

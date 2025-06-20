@@ -13,6 +13,12 @@ const AddLibraryHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   // color: theme.palette.text.primary,
+
+  [theme.breakpoints.down('sm')]: {
+    border: 'solid 2px white',
+    borderRadius: '30px',
+    padding: '0 8px',
+  },
 }));
 
 const SubTitle = styled('div')(({ theme }) => ({}));

@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router';
 import SearchBox from '../../pages/PlaylistPage/component/SearchBox';
 import { OneKk } from '@mui/icons-material';
+import LibraryHead from './LibraryHead';
 
 const ProfileImageBox = styled('div')(({ theme }) => ({
   minWidth: '40px',
@@ -62,7 +63,12 @@ const Navbar = () => {
   return (
     <Box
       display="flex"
-      justifyContent={location.pathname.startsWith('/search') ? 'space-between' : 'flex-end'}
+      justifyContent={
+        location.pathname.startsWith('/search') ||
+        (location.pathname.startsWith('/playlist') && window.innerWidth <= 600)
+          ? 'space-between'
+          : 'flex-end'
+      }
       alignItems="center"
       height="64px"
       width="100%"
@@ -75,6 +81,8 @@ const Navbar = () => {
           enterKeywordFn={enterKeywordFn}
         />
       )}
+      {location.pathname.startsWith('/playlist') && window.innerWidth <= 600 && <LibraryHead />}
+
       {userProfile ? (
         userProfile.images[0] ? (
           <ProfileImageBox onClick={(e) => setAnchorEl(e.currentTarget)}>

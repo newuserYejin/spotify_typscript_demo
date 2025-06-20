@@ -1,6 +1,6 @@
 // 모바일 버전에서 사용
 import { Box, styled } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useGetCurrentUserProfile from '../../hooks/useGetCurrentUserProfile';
 import useGetCurrentUserPlaylists from '../../hooks/useGetCurrentUserPlaylists';
 import { useInView } from 'react-intersection-observer';
@@ -8,12 +8,12 @@ import EmptyPlaylist from '../../layout/components/EmptyPlaylist';
 import LoadingSpinner from '../../common/components/LoadingSpinner';
 import ErrorMessage from '../../common/components/ErrorMessage';
 import PlayList from '../../layout/components/PlayList';
+import { Navigate } from 'react-router';
 
 const PlaylistContainer = styled('div')(({ theme }) => ({
   width: '100%',
   height: '100%',
   overflow: 'auto',
-  border: 'solid 1px red',
 
   scrollbarWidth: 'none', // Firefox
   '&::-webkit-scrollbar': {
@@ -23,6 +23,7 @@ const PlaylistContainer = styled('div')(({ theme }) => ({
 }));
 
 const PlaylistPage = () => {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const { data: user } = useGetCurrentUserProfile();
   const { data, isLoading, error, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useGetCurrentUserPlaylists({
@@ -30,6 +31,31 @@ const PlaylistPage = () => {
       offset: 0,
     });
   const { ref, inView } = useInView();
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 600); // sm 이하
+    };
+
+    checkIsMobile(); // 첫 마운트 시 체크
+    window.addEventListener('resize', checkIsMobile);
+
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
+  if (isMobile === null) return null; // 초기 렌더 시 로딩 방지
+
+  // ✅ 모바일이 아니면 "/"로 리디렉션
+  if (!isMobile) {
+    return <Navigate to="/" replace />;
+  }
+
   if (!user) {
     return (
       <Box
@@ -38,7 +64,6 @@ const PlaylistPage = () => {
           alignItems: 'center',
           justifyContent: 'center',
           width: '100%',
-          border: 'solid 2px white',
           height: 'calc(100% - 80px)',
         }}
       >

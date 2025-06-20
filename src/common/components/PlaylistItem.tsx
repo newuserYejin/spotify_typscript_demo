@@ -1,3 +1,4 @@
+import { Height } from '@mui/icons-material';
 import { ListItemButton, styled, Typography } from '@mui/material';
 import React from 'react';
 
@@ -18,14 +19,21 @@ const ItemContainer = styled(ListItemButton)(({ theme, selected }) => ({
   height: '100px',
   marginBottom: '8px',
   backgroundColor: selected ? theme.palette.action.active : '',
+
+  [theme.breakpoints.down('sm')]: {},
 }));
 
-const ItemImgBox = styled('img')({
+const ItemImgBox = styled('img')(({ theme }) => ({
   width: '35%',
   aspectRatio: '1/1',
   borderRadius: '10px',
   marginRight: '15px',
-});
+
+  [theme.breakpoints.down('sm')]: {
+    height: '100%',
+    width: 'auto',
+  },
+}));
 
 const NoImgBox = styled('div')(({ theme }) => ({
   width: '35%',
